@@ -1,6 +1,31 @@
 <?php
 session_start();
 
+include (APP_PATH . '/config/config.php');
+error_reporting(E_ALL ^ E_WARNING);
+
+$db = mysql_connect($db_host, $db_user, $db_password) or die("Could not connect to database. Please check the config file at: <pre>".APP_PATH."/config/config.php</pre>");
+if (!$db) {
+	die("no db");
+}
+if (!mysql_select_db($db_table, $db)) {
+	die("No database table <strong>$db_table</strong> was found. Please check the config file at: <pre>".APP_PATH."/config/config.php</pre>"); 
+}
+if (!get_magic_quotes_gpc()) {
+  $_GET = array_map('mysql_real_escape_string', $_GET); 
+  $_POST = array_map('mysql_real_escape_string', $_POST); 
+  $_COOKIE = array_map('mysql_real_escape_string', $_COOKIE);
+} else {  
+   $_GET = array_map('stripslashes', $_GET); 
+   $_POST = array_map('stripslashes', $_POST); 
+   $_COOKIE = array_map('stripslashes', $_COOKIE);
+   $_GET = array_map('mysql_real_escape_string', $_GET); 
+   $_POST = array_map('mysql_real_escape_string', $_POST); 
+   $_COOKIE = array_map('mysql_real_escape_string', $_COOKIE);
+}
+
+error_reporting(E_ALL);
+
 include (BASE_PATH . 'core/Object.php');
 include (BASE_PATH . 'core/Controller.php');
 include (BASE_PATH . 'core/Model.php');
