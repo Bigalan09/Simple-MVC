@@ -17,7 +17,7 @@ class HTMLHelper extends Helper {
 				$path = BASE_PATH . 'css/' . $file;
 				
 				if (file_exists($path)) {
-					$www_path = "http://".$_SERVER['HTTP_HOST'] . self::base() . "/css/" . $file;
+					$www_path = self::base() . "/css/" . $file;
 					echo "\t<link type = \"text/css\" rel = \"stylesheet\" href = \"" . $www_path . "\" />\n";
 				}
 			} else {
@@ -41,7 +41,7 @@ class HTMLHelper extends Helper {
 				$path = BASE_PATH . 'js/' . $file;
 				
 				if (file_exists($path)) {
-					$www_path = "http://".$_SERVER['HTTP_HOST'] . self::base() . "/js/" . $file;
+					$www_path = self::base() . "/js/" . $file;
 					echo "\t<script type = \"text/javascript\" src = \"$www_path\"></script>\n";
 				}
 			} else {
@@ -64,10 +64,11 @@ class HTMLHelper extends Helper {
 	}
 	
 	public static function scriptAll() {
+		self::css('jquery');
 		if ($handle = opendir(BASE_PATH . '/js/')) {
 			while (false !== ($entry = readdir($handle))) {
 				$file_ext = substr($entry, -3);
-				if ($entry != "." && $entry != ".." && $file_ext == ".js") {
+				if ($entry != "." && $entry != ".." && $file_ext == ".js" && $file_ext != "jquery.js") {
 					self::script($entry);
 				}
 			}
@@ -79,7 +80,7 @@ class HTMLHelper extends Helper {
 	public static function image($name, $alt = '', $params = null) {
 		$checkNameString = strpos($name, 'http://');
 		if ($checkNameString === false){
-			$path = "http://" . $_SERVER['HTTP_HOST'] . self::base() . "/images/" . $name;
+			$path = self::base() . "/images/" . $name;
 		}else{
 			$path = $name;
 		}
@@ -99,7 +100,7 @@ class HTMLHelper extends Helper {
 				$attr .= " $key = \"$value\"";
 			}
 		}
-		$path = "http://" . $_SERVER['HTTP_HOST'] . self::base() . '/' . $path;
+		$path = self::base() . '/' . $path;
 		echo "<a href = \"" . $path . "\"$attr>" . $text . "</a>";
 	}
 	
@@ -116,7 +117,7 @@ class HTMLHelper extends Helper {
 			}
 		}
 		if ($checkImageString === false){
-			$img_path = "http://" . $_SERVER['HTTP_HOST'] . self::base() . '/images/' . $image;
+			$img_path = self::base() . '/images/' . $image;
 		}else{
 			$img_path = $image;
 		}
