@@ -10,7 +10,7 @@ class Router extends Object {
 			$action = "index";
 		}
 		
-		self::load_controller('App');
+		self::load_controller('app');
 		$app_class = new AppController();
 		self::get_user_vars($app_class);
 		
