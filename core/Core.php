@@ -33,7 +33,7 @@ include (BASE_PATH . 'core/helpers/Helper.php');
 include (BASE_PATH . 'core/helpers/HTMLHelper.php');
 include (BASE_PATH . 'core/Router.php');
 
-$requestURI = explode('/', $_SERVER['REQUEST_URI']);
+$requestURI = explode('/', key($_GET));
 
 $control = 'pages';
 $method = 'index';
