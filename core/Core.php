@@ -157,11 +157,11 @@ if (!defined('FULL_BASE_URL')) {
 	}
 
 	$httpHost = env('HTTP_HOST');
-	$baseHost = basename(dirname(dirname(__FILE__)));
+	$base = basename(dirname(dirname(__FILE__)));
 	
-	if ($httpHost == $baseHost) {
+	if ($httpHost == $base) {
 		$base = "";
-	} else { $base = '/' . $base;
+	} else { $base = '/' . $base; }
 
 	if (isset($httpHost)) {
 		define('FULL_BASE_URL', 'http' . $s . '://' . $httpHost . $base);
