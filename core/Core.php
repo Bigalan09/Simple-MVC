@@ -159,7 +159,7 @@ if (!defined('FULL_BASE_URL')) {
 	$httpHost = env('HTTP_HOST');
 	$base = basename(dirname(dirname(__FILE__)));
 	
-	if ($httpHost == $base) {
+	if ($httpHost == $base || $base == "htdocs") {
 		$base = "";
 	} else { $base = '/' . $base; }
 
