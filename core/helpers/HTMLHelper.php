@@ -108,7 +108,7 @@ class HTMLHelper extends Helper {
 		$checkPathString = strpos($path, 'http://');
 		$checkImageString = strpos($image, 'http://');
 		if ($checkPathString === false){
-			$path = "http://" . $_SERVER['HTTP_HOST'] . self::base() . '/' . $path;
+			$path = self::base() . '/' . $path;
 		}
 		$attributes = '';
 		if ($attr) {
