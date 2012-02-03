@@ -2,6 +2,7 @@
 
 class Router extends Object {
 	public static $path = null;
+	protected static $_action = null;
 	
 	public static function dispatch($control, $action = '', $params = null) {
 		$class_name = $control;
@@ -9,6 +10,7 @@ class Router extends Object {
 		if (empty($action)) {
 			$action = "index";
 		}
+		self::$_action = $action;
 		
 		self::load_controller('app');
 		$app_class = new AppController();
@@ -20,25 +22,30 @@ class Router extends Object {
 			$tmp_class = new $class_name();
 			
 			$tmp_class->beforeFilter();
-			
-			if (is_callable(array($tmp_class, $action))) {
-				$tmp_class->$action($params);
-			} else {
-				die('The action <strong>' . $action . '</strong> could not be called from the controller <strong>' . $class_name . '</strong>');
+			if ($tmp_class->autoRender) {
+				if (is_callable(array($tmp_class, $action))) {
+					$tmp_class->$action($params);
+				} else {
+					die('The action <strong>' . $action . '</strong> could not be called from the controller <strong>' . $class_name . '</strong>');
+				}
 			}
 		} else {
 			die('The class <strong>' . $class_name . '</strong> could not be found in <pre>' . APP_PATH . '/controllers/' . $class_name . 'Controller.php</pre>');
 		}
 		
-		$tmp_class->beforeRender();
+		if ($tmp_class->autoRender) {
+			$tmp_class->beforeRender();
+			self::get_user_vars($tmp_class);
+			self::render(self::view_path($control, $action), self::get_layout($control, $action));
+			$tmp_class->afterRender();
+		}
 		
-		self::get_user_vars($tmp_class);
-		
-		$layout_path = self::get_layout($control, $action);
-		
-		if (!empty($layout_path)) {
-			$layout = file_get_contents($layout_path);
-			$view_path = self::view_path($control, $action);
+	}
+	
+	public static function render($view = null, $layout = null) {
+		if (!empty($layout)) {
+			$layout = file_get_contents($layout);
+			$view_path = $view;
 			
 			if (file_exists($view_path)) {
 				$layout = str_replace('{PAGE_CONTENT}', file_get_contents($view_path), $layout);
@@ -56,7 +63,6 @@ class Router extends Object {
 			unlink($filename);
 		} else
 			die ('Could not find a layout in <pre>' . APP_PATH . '/views/layouts</pre>');
-		$tmp_class->afterRender();
 	}
 	
 	public static function load_controller($name) {
@@ -75,11 +81,14 @@ class Router extends Object {
 				$$var = $value;}
 			include_once $view_path;
 		} else {
-			die ('The file <strong>' . $view_path . '</strong> could not be found.');
+			die ('The file <strong>' . $view_path . '</strong> could not be found. (load_view)');
 		}
 	}
 	
-	public static function get_layout($controller, $action) {
+	public static function get_layout($controller, $action = null) {
+		if ($action === null) {
+			$action = self::$_action;
+		}
 		// controller-action.php
 		$controller_action_path = APP_PATH . '/views/layouts/' . $controller . '-' . $action . '.php';
 		// controller.php
@@ -99,7 +108,10 @@ class Router extends Object {
 		return $path_to_use;
 	}
 	
-	public static function view_path($controller, $action) {
+	public static function view_path($controller, $action = null) {
+		if ($action === null) {
+			$action = self::$_action;
+		}
 		$view_path = APP_PATH . '/views/' . $controller . '/' . $action . '.php';
 		$path = null;
     
