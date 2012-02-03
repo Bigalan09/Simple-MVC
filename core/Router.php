@@ -93,8 +93,8 @@ class Router extends Object {
 		$controller_action_path = APP_PATH . '/views/layouts/' . $controller . '-' . $action . '.php';
 		// controller.php
 		$controller_path = APP_PATH . '/views/layouts/' . $controller . '.php';
-		// index.php
-		$application_path = APP_PATH . '/views/layouts/index.php';
+		// application.php
+		$application_path = APP_PATH . '/views/layouts/application.php';
 		
 		$path_to_use = null;
 		// find the path to use
