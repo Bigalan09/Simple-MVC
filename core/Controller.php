@@ -19,4 +19,14 @@ class Controller extends Object {
 		
 		return $tmp_class;
 	}
+	
+	public function beforeFilter() {
+	}
+	
+	public function beforeRender() {
+	}
+	
+	public function afterRender() {
+	}
+	
 }
