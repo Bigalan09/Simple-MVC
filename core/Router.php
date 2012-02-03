@@ -18,7 +18,9 @@ class Router extends Object {
 		
 		if (class_exists($class_name)) {
 			$tmp_class = new $class_name();
-		
+			
+			$tmp_class->beforeFilter();
+			
 			if (is_callable(array($tmp_class, $action))) {
 				$tmp_class->$action($params);
 			} else {
@@ -27,6 +29,8 @@ class Router extends Object {
 		} else {
 			die('The class <strong>' . $class_name . '</strong> could not be found in <pre>' . APP_PATH . '/controllers/' . $class_name . 'Controller.php</pre>');
 		}
+		
+		$tmp_class->beforeRender();
 		
 		self::get_user_vars($tmp_class);
 		
@@ -52,6 +56,7 @@ class Router extends Object {
 			unlink($filename);
 		} else
 			die ('Could not find a layout in <pre>' . APP_PATH . '/views/layouts</pre>');
+		$tmp_class->afterRender();
 	}
 	
 	public static function load_controller($name) {
@@ -79,8 +84,8 @@ class Router extends Object {
 		$controller_action_path = APP_PATH . '/views/layouts/' . $controller . '-' . $action . '.php';
 		// controller.php
 		$controller_path = APP_PATH . '/views/layouts/' . $controller . '.php';
-		// application.php
-		$application_path = APP_PATH . '/views/layouts/application.php';
+		// index.php
+		$application_path = APP_PATH . '/views/layouts/index.php';
 		
 		$path_to_use = null;
 		// find the path to use
