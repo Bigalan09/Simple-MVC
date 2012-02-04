@@ -159,7 +159,11 @@ if (!defined('FULL_BASE_URL')) {
 	} else { $base = '/' . $base; }
 
 	if (isset($httpHost)) {
-		define('FULL_BASE_URL', 'http' . $s . '://' . $httpHost . $base);
+		if (strpos($httpHost, 'www') !== false) {
+			define('FULL_BASE_URL', 'http' . $s . '://' . $base);
+		}else{		
+			define('FULL_BASE_URL', 'http' . $s . '://' . $httpHost . $base);
+		}
 	}
 	unset($httpHost, $s);
 }
