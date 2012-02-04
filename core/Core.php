@@ -160,7 +160,7 @@ if (!defined('FULL_BASE_URL')) {
 
 	if (isset($httpHost)) {
 		if (strpos($httpHost, 'www') !== false) {
-			define('FULL_BASE_URL', 'http' . $s . '://' . $base);
+			define('FULL_BASE_URL', 'http' . $s . ':/' . $base);
 		}else{		
 			define('FULL_BASE_URL', 'http' . $s . '://' . $httpHost . $base);
 		}
