@@ -28,6 +28,45 @@ class Controller extends Object {
 		return $tmp_class;
 	}
 	
+	public function redirect($url, $autoRender = false){
+		$this->autoRender = $autoRender;
+		
+		// Check if not external link
+		if (!
+				(strpos($url, '://') !== false ||
+				(strpos($url, 'javascript:') === 0) ||
+				(strpos($url, 'mailto:') === 0)) ||
+				(!strncmp($url, '#', 1))
+		) {
+			if (strpos($url, '/')) {
+				$url = FULL_BASE_URL . $url;
+			} else {
+				$this->name = get_class($this);
+				
+				$url = FULL_BASE_URL . '/' . $this->name . '/' . $url;
+			}
+		}
+		
+		if (function_exists('session_write_close')) {
+			session_write_close();
+		}
+		
+		if ($url !== null) {
+			$pageURL = (@$_SERVER["HTTPS"] == "on") ? "https://" : "http://";
+			if ($_SERVER["SERVER_PORT"] != "80")
+			{
+			    $pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
+			} 
+			else 
+			{
+			    $pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+			}
+			if ($pageURL !== $url)
+				header('Location: ' . $url);
+		}
+		
+	}
+	
 	public function render($view = null, $layout = null){
 		$this->beforeRender();
 		$this->autoRender = false;
