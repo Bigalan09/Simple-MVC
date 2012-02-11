@@ -22,13 +22,25 @@ class Router extends Object {
 			$tmp_class = new $class_name();
 			
 			$tmp_class->beforeFilter();
-			if ($tmp_class->autoRender) {
+			//if ($tmp_class->autoRender) {
 				if (is_callable(array($tmp_class, $action))) {
 					$tmp_class->$action($params);
-				} else {
+				} else if (is_callable(array($tmp_class, '_' . $action))) {
+						$action = '_' . $action;
+						if (is_callable(array($tmp_class, 'isAuthorised'))) {
+							if ($tmp_class->isAuthorised()) {
+								$tmp_class->$action($params);
+								$action = substr($action, 1, strlen($action));
+							} else {
+								die('The action <strong>' . substr($action, 1, strlen($action)) . '</strong> has not been authorised from the controller <strong>' . $class_name . '</strong>.');
+							}
+						} else {
+							die('The action <strong>isAuthorised()</strong> needs to be implemented in the controller <strong>' . $class_name . '</strong>.');
+						}
+				} else {		
 					die('The action <strong>' . $action . '</strong> could not be called from the controller <strong>' . $class_name . '</strong>');
 				}
-			}
+			//}
 		} else {
 			die('The class <strong>' . $class_name . '</strong> could not be found in <pre>' . APP_PATH . '/controllers/' . $class_name . 'Controller.php</pre>');
 		}
