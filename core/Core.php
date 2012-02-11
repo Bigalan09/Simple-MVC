@@ -145,6 +145,10 @@ function env($key) {
 	return null;
 }
 
+if (!defined('ENCRYPT_KEY')) {
+	define('ENCRYPT_KEY', $encrypt_key);
+}
+
 if (!defined('FULL_BASE_URL')) {
 	$s = null;
 	if (env('HTTPS')) {
@@ -153,13 +157,17 @@ if (!defined('FULL_BASE_URL')) {
 
 	$httpHost = env('HTTP_HOST');
 	$base = basename(dirname(dirname(__FILE__)));
-	
+
 	if ($httpHost == $base || $base == "htdocs") {
 		$base = "";
 	} else { $base = '/' . $base; }
 
 	if (isset($httpHost)) {
-		define('FULL_BASE_URL', 'http' . $s . '://' . $httpHost . $base);
+		if (strpos($httpHost, 'www') !== false) {
+			define('FULL_BASE_URL', 'http' . $s . ':/' . $base);
+		}else{		
+			define('FULL_BASE_URL', 'http' . $s . '://' . $httpHost . $base);
+		}
 	}
 	unset($httpHost, $s);
 }
