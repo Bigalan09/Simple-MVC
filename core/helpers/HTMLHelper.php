@@ -64,11 +64,10 @@ class HTMLHelper extends Helper {
 	}
 	
 	public static function scriptAll() {
-		self::css('jquery');
 		if ($handle = opendir(BASE_PATH . '/js/')) {
 			while (false !== ($entry = readdir($handle))) {
 				$file_ext = substr($entry, -3);
-				if ($entry != "." && $entry != ".." && $file_ext == ".js" && $file_ext != "jquery.js") {
+				if ($entry != "." && $entry != ".." && $file_ext == ".js") {
 					self::script($entry);
 				}
 			}
