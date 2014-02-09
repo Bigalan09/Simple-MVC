@@ -2,107 +2,94 @@
 
 // contain's methods for all the user defined controllers
 class Controller extends Object {
-	
 	public $autoRender = true;
 	public $name = null;
-	
+	public $method = null;
 	public function __construct() {
 		if ($this->name === null) {
-			$this->name = get_class($this);
+			$this->name = get_class ( $this );
 		}
 	}
-	
 	public function load_model($name) {
 		$model_path = APP_PATH . '/models/' . $name . 'Model.php';
-		if ( file_exists( $model_path ) ) {
+		if (file_exists ( $model_path )) {
 			include_once $model_path;
 			
-			if ( class_exists( $name ) ) {
-				$tmp_class = new $name();
-				self::get_user_vars($tmp_class);
+			if (class_exists ( $name )) {
+				$tmp_class = new $name ();
+				self::get_user_vars ( $tmp_class );
 			} else
-				die('The class <strong>' . $name . '</strong> could not be found in <pre>' . APP_PATH . '/models/' . $name . 'Model.php</pre>');
-		} else 
-			die('The file <strong>' . $name . 'Model.php</strong> could not be found at <pre>' . APP_PATH . '/models/' . $name . 'Model.php</pre>');
+				die ( 'The class <strong>' . $name . '</strong> could not be found in <pre>' . APP_PATH . '/models/' . $name . 'Model.php</pre>' );
+		} else
+			die ( 'The file <strong>' . $name . 'Model.php</strong> could not be found at <pre>' . APP_PATH . '/models/' . $name . 'Model.php</pre>' );
 		
 		return $tmp_class;
 	}
-	
-	public function redirect($url, $autoRender = false){
+	public function redirect($url, $autoRender = false) {
 		$this->autoRender = $autoRender;
-		
+		$tmp = $url;
 		// Check if not external link
-		if (!
-				(strpos($url, '://') !== false ||
-				(strpos($url, 'javascript:') === 0) ||
-				(strpos($url, 'mailto:') === 0)) ||
-				(!strncmp($url, '#', 1))
-		) {
-			if (strpos($url, '/')) {
+		if (! (strpos ( $url, '://' ) !== false || (strpos ( $url, 'javascript:' ) === 0) || (strpos ( $url, 'mailto:' ) === 0)) || (! strncmp ( $url, '#', 1 ))) {
+			if ((! strncmp ( $url, '/', 1 ))) {
 				$url = FULL_BASE_URL . $url;
 			} else {
-				$this->name = get_class($this);
-				
-				$url = FULL_BASE_URL . '/' . $this->name . '/' . $url;
+				$uri = explode('/', $url);
+				if (count($uri) == 0) {
+					$this->name = get_class ( $this );
+					$url = FULL_BASE_URL . '/' . $this->name . '/' . $url;
+				} else {
+					$url = FULL_BASE_URL . '/' . $url;
+				}
 			}
 		}
 		
-		if (function_exists('session_write_close')) {
-			session_write_close();
+		if (function_exists ( 'session_write_close' )) {
+			session_write_close ();
 		}
 		
 		if ($url !== null) {
-			$pageURL = (@$_SERVER["HTTPS"] == "on") ? "https://" : "http://";
-			if ($_SERVER["SERVER_PORT"] != "80")
-			{
-			    $pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
-			} 
-			else 
-			{
-			    $pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+			$pageURL = (@$_SERVER ["HTTPS"] == "on") ? "https://" : "http://";
+			if ($_SERVER ["SERVER_PORT"] != "80") {
+				$pageURL .= $_SERVER ["SERVER_NAME"] . ":" . $_SERVER ["SERVER_PORT"] . $_SERVER ["REQUEST_URI"];
+			} else {
+				$pageURL .= $_SERVER ["SERVER_NAME"] . $_SERVER ["REQUEST_URI"];
 			}
 			if ($pageURL !== $url)
-				header('Location: ' . $url);
+				header ( 'Location: ' . $url );
 		}
-		
 	}
-	
-	public function render($view = null, $layout = null){
-		$this->beforeRender();
+	public function render($view = null, $layout = null) {
+		$this->beforeRender ();
 		$this->autoRender = false;
 		
-		$this->name = get_class($this);
+		$this->name = get_class ( $this );
 		
-		if ($view === null) {				
-			$view = Router::view_path($this->name);
+		if ($view === null) {
+			$view = Router::view_path ( $this->name );
 		} else {
-			if (strpos($view, '/')) {
-				$r = explode('/', $view);
-				$view = Router::view_path($r[0], $r[1]);
+			if (strpos ( $view, '/' )) {
+				$r = explode ( '/', $view );
+				$view = Router::view_path ( $r [0], $r [1] );
 			} else {
-				$view = Router::view_path($this->name, $view);
+				$view = Router::view_path ( $this->name, $view );
 			}
 		}
 		
 		if ($layout === null) {
-			$layout = Router::get_layout($this->name);
+			$layout = Router::get_layout ( $this->name );
 		} else {
-			$layout = Router::get_layout($layout);
+			$layout = Router::get_layout ( $layout );
 		}
 		
-		Router::render($view, $layout);
-		$this->afterRender();
+		Router::render ( $view, $layout );
+		$this->afterRender ();
 		
 		return true;
 	}
-	
 	public function beforeFilter() {
 	}
-	
 	public function beforeRender() {
 	}
-	
 	public function afterRender() {
 	}
-	
 }

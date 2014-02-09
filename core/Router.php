@@ -6,6 +6,7 @@ class Router extends Object {
 	
 	public static function dispatch($control, $action = '', $params = null) {
 		$class_name = $control;
+		if (strtolower($class_name) == "api") $class_name = strtolower($class_name);
 		
 		if (empty($action)) {
 			$action = "index";
@@ -20,7 +21,7 @@ class Router extends Object {
 		
 		if (class_exists($class_name)) {
 			$tmp_class = new $class_name();
-			
+			$tmp_class->method = $action;
 			$tmp_class->beforeFilter();
 			//if ($tmp_class->autoRender) {
 				if (is_callable(array($tmp_class, $action))) {
@@ -60,9 +61,9 @@ class Router extends Object {
 			$view_path = $view;
 			
 			if (file_exists($view_path)) {
-				$layout = str_replace('{PAGE_CONTENT}', file_get_contents($view_path), $layout);
+				$layout = str_replace('{{ CONTENT }}', file_get_contents($view_path), $layout);
 			} else {
-				$layout = str_replace('{PAGE_CONTENT}', '', $layout);
+				$layout = str_replace('{{ CONTENT }}', '', $layout);
 			}
 			$filename = BASE_PATH . 'tmp/' . time() . '.php';
 			

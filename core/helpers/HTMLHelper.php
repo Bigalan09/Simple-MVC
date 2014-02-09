@@ -17,7 +17,7 @@ class HTMLHelper extends Helper {
 				$path = BASE_PATH . 'css/' . $file;
 				
 				if (file_exists($path)) {
-					$www_path = self::base() . "/css/" . $file;
+					$www_path = "/css/" . $file;
 					echo "\t<link type = \"text/css\" rel = \"stylesheet\" href = \"" . $www_path . "\" />\n";
 				}
 			} else {
@@ -41,7 +41,7 @@ class HTMLHelper extends Helper {
 				$path = BASE_PATH . 'js/' . $file;
 				
 				if (file_exists($path)) {
-					$www_path = self::base() . "/js/" . $file;
+					$www_path = "/js/" . $file;
 					echo "\t<script type = \"text/javascript\" src = \"$www_path\"></script>\n";
 				}
 			} else {
@@ -79,7 +79,7 @@ class HTMLHelper extends Helper {
 	public static function image($name, $alt = '', $params = null) {
 		$checkNameString = strpos($name, 'http://');
 		if ($checkNameString === false){
-			$path = self::base() . "/images/" . $name;
+			$path = "/img/" . $name;
 		}else{
 			$path = $name;
 		}
@@ -89,7 +89,7 @@ class HTMLHelper extends Helper {
 				$attr .= " $key = \"$value\"";
 			}
 		}
-		echo "<img src = \"$path\" alt = \"$name\" $attr />\n";
+		echo "<img src = \"$path\" alt = \"$alt\" $attr />\n";
 	}
 	
 	public static function link($path, $text, $attribs = null) {
@@ -103,24 +103,35 @@ class HTMLHelper extends Helper {
 		echo "<a href = \"" . $path . "\"$attr>" . $text . "</a>";
 	}
 	
-	public function image_link($path, $image, $attr = null) {
+	public static function image_link($path, $image, $imgattr = null, $linkattr = null) {
 		$checkPathString = strpos($path, 'http://');
 		$checkImageString = strpos($image, 'http://');
 		if ($checkPathString === false){
 			$path = self::base() . '/' . $path;
 		}
-		$attributes = '';
-		if ($attr) {
-			foreach ($attr as $key => $value) {
-				$attributes .= " $key = \"$value\"";
+	$imgattributes = '';
+		if ($imgattr && is_array($imgattr)) {
+			foreach ($imgattr as $key => $value) {
+				$imgattributes .= " $key = \"$value\"";
 			}
+		} else if ($imgattr) {
+			$imgattributes .= " alt = \"$imgattr\"";
+		}
+		
+		$linkattributes = '';
+		if ($linkattr && is_array($linkattr)) {
+			foreach ($linkattr as $key => $value) {
+				$linkattributes .= " $key = \"$value\"";
+			}
+		} else if ($linkattr) {
+			$linkattributes .= " alt = \"$linkattr\"";
 		}
 		if ($checkImageString === false){
-			$img_path = self::base() . '/images/' . $image;
+			$img_path = self::base() . '/img/' . $image;
 		}else{
 			$img_path = $image;
 		}
-		echo "<a href = \"".$path."\"><img src = \"$img_path\" $attributes /></a>\n";
+		echo "<a href = \"".$path."\" $linkattributes><img src = \"$img_path\" $imgattributes /></a>\n";
 	}
 	
 }
